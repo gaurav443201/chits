@@ -1,4 +1,8 @@
+# Global variable for simplicity
+graph = {}
+
 def create_graph():
+    global graph
     graph = {}
     n = int(input("Enter number of nodes: "))
     for i in range(n):
@@ -9,19 +13,28 @@ def create_graph():
         u = int(input(f"Enter source node of edge {i+1}: "))
         v = int(input(f"Enter destination node of edge {i+1}: "))
         graph[u].append(v)
-        graph[v].append(u)  # for undirected graph
+        graph[v].append(u)  # undirected graph
     print("Graph created successfully!")
-    return graph
 
 
-def display(graph):
+def display():
+    global graph
+    if not graph:
+        print("Graph not created yet!")
+        return
     print("\nAdjacency List of Graph:")
     for node in graph:
         print(node, "->", graph[node])
     print()
 
 
-def bfs(graph, start):
+def bfs():
+    global graph
+    if not graph:
+        print("Graph not created yet!")
+        return
+    start = int(input("Enter starting node for BFS: "))
+
     visited = []
     queue = []
 
@@ -29,7 +42,7 @@ def bfs(graph, start):
     queue.append(start)
 
     print("BFS Traversal:", end=" ")
-    while len(queue) > 0:
+    while queue:
         node = queue.pop(0)
         print(node, end=" ")
         for neighbour in graph[node]:
@@ -40,9 +53,7 @@ def bfs(graph, start):
 
 
 # ---------------- MAIN PROGRAM ----------------
-graph = {}
-
-while True:
+def menu():
     print("""
 ===== MENU =====
 1) Create Graph
@@ -52,30 +63,20 @@ while True:
 ================
 """)
 
+
+while True:
+    menu()
     ch = int(input("Enter your choice: "))
 
     if ch == 1:
-        graph = create_graph()
-
+        create_graph()
     elif ch == 2:
-        if len(graph) == 0:
-            print("Graph is empty! Please create a graph first.")
-        else:
-            display(graph)
-
+        display()
     elif ch == 3:
-        if len(graph) == 0:
-            print("Graph is empty! Please create a graph first.")
-        else:
-            start = int(input("Enter starting node for BFS: "))
-            if start in graph:
-                bfs(graph, start)
-            else:
-                print("Invalid starting node!")
-
+        bfs()
     elif ch == 4:
         print("THANK YOU!!!")
         break
-
     else:
         print("Invalid choice! Please enter 1–4.")
+
