@@ -1,38 +1,61 @@
+# ----------- EXPRESSION TREE USING PREFIX -----------
+
+tree = None  # Global tree
+
+
 def is_operator(ch):
     return ch in ['+', '-', '*', '/', '^']
 
 
-def create_tree(prefix):
+def create_tree():
+    global tree
+    prefix = input("Enter prefix expression: ")
     stack = []
     for ch in prefix[::-1]:
         if not is_operator(ch):
-            stack.append([ch, None, None])   # node = [data, left, right]
+            stack.append([ch, None, None])  # node = [data, left, right]
         else:
             left = stack.pop()
             right = stack.pop()
             stack.append([ch, left, right])
+    tree = stack[0]
     print("Expression Tree created successfully!")
-    return stack[0]
 
 
-def postorder(node):
+def postorder():
+    if tree is None:
+        print("Tree not created yet! Please create first.")
+        return
+    print("Postorder Traversal:", end=" ")
+    postorder_traversal(tree)
+    print()
+
+
+def postorder_traversal(node):
     if node is not None:
-        postorder(node[1])
-        postorder(node[2])
+        postorder_traversal(node[1])
+        postorder_traversal(node[2])
         print(node[0], end=" ")
 
 
-def delete_tree(node):
+def delete_tree():
+    global tree
+    if tree is None:
+        print("Tree not created yet!")
+        return
+    delete_nodes(tree)
+    tree = None
+    print("Tree deleted successfully.")
+
+
+def delete_nodes(node):
     if node is not None:
-        delete_tree(node[1])
-        delete_tree(node[2])
+        delete_nodes(node[1])
+        delete_nodes(node[2])
         node[0] = None
 
 
-# ------------------ MAIN PROGRAM ------------------
-tree = None
-
-while True:
+def menu():
     print("""
 ========== MENU ==========
 1) Create Expression Tree
@@ -41,31 +64,21 @@ while True:
 4) Exit
 ==========================
 """)
+
+
+# ------------------ MAIN PROGRAM ------------------
+while True:
+    menu()
     ch = int(input("Enter your choice: "))
 
     if ch == 1:
-        prefix = input("Enter prefix expression: ")
-        tree = create_tree(prefix)
-
+        create_tree()
     elif ch == 2:
-        if tree is None:
-            print("Tree not created yet! Please create first.")
-        else:
-            print("\nPostorder Traversal:")
-            postorder(tree)
-            print()
-
+        postorder()
     elif ch == 3:
-        if tree is None:
-            print("Tree not created yet!")
-        else:
-            delete_tree(tree)
-            tree = None
-            print("Tree deleted successfully.")
-
+        delete_tree()
     elif ch == 4:
         print("THANK YOU!!!")
         break
-
     else:
         print("Invalid choice! Please enter 1–4.")
